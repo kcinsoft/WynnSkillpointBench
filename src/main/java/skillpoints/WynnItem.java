@@ -5,8 +5,8 @@ import java.util.Arrays;
 public class WynnItem {
 	public static final int NUM_SKILLPOINTS = 5;
 	
-	public final int[] requirements;
-	public final int[] bonuses;
+	public int[] requirements;
+	public int[] bonuses;
 
 	/**
 	 * Construct an item with the given requirements and skillpoint bonuses.
