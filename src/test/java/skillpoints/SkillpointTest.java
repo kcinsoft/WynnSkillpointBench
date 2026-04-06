@@ -57,7 +57,8 @@ public class SkillpointTest {
                 Named.of("WynnAlgorithm", new WynnAlgorithm()),
                 Named.of("SCCGraphAlgorithm", new SCCGraphAlgorithm()),
                 Named.of("OptimizedDFS", new OptimizedDFSChecker()),
-                Named.of("WynnSolver", new WynnSolverAlgorithm()));
+                Named.of("WynnSolver", new WynnSolverAlgorithm()),
+                Named.of("GreedyAlgorithm", new GreedyAlgorithm()));
     }
 
     // -- Test cases (shared with JMH benchmark in TestCases.java) -----------
