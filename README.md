@@ -44,14 +44,14 @@ TODO
 
 Given a set of items (each with skillpoint requirements and bonuses) and a player's assigned skillpoints, determine which items can be simultaneously equipped. Items must be equipped in some order where each item's requirements are met at equip time, and no item's requirements are violated by later items' negative bonuses.
 
-## Algorithms
+## Algorithms (Current Standings)
 
 | Class | Approach | Worst-case Time | Status |
 |-------|----------|-----------------|--------|
-| `WynnAlgorithm` | Greedy positives + 2^n negative-mask enumeration | O(n² · 2^q), q = negative items. All-negative worst case: O(n² · 2^n) | 22/23, ~3ms total |
-| `SCCGraphAlgorithm` | Dependency graph → Kosaraju SCC → permute within SCCs | O(n · ∏mᵢ!) across SCC sizes mᵢ. Single-SCC worst case: O(n · n!) | 14/23, ~4.7ms total |
-| `OptimizedDFS` | DFS with dominance pruning + bitmask memoization | O(m · 2^m), m = non-free items after preprocessing (hard-coded m ≤ 8) | 20/23, ~9ms total |
-| `WynnSolverAlgorithm` | Free-item activation + backtracking over activation orderings with cascade validity | O(n · k!), k = non-free items. Worst case: O(n · n!) but pruning + early exit keep real builds fast | 23/23, ~0.25ms total |
+| `WynnAlgorithm` | Greedy positives + 2^n negative-mask enumeration | O(n² · 2^q), q = negative items. All-negative worst case: O(n² · 2^n) | 22/23, ~0.068ms total |
+| `SCCGraphAlgorithm` | Dependency graph → Kosaraju SCC → permute within SCCs | O(n · ∏mᵢ!) across SCC sizes mᵢ. Single-SCC worst case: O(n · n!) | 14/23, ~0.093ms total |
+| `OptimizedDFS` | DFS with dominance pruning + bitmask memoization | O(m · 2^m), m = non-free items after preprocessing (hard-coded m ≤ 8) | 20/23, ~0.096ms total |
+| `WynnSolverAlgorithm` | Free-item activation + backtracking over activation orderings with cascade validity | O(n · k!), k = non-free items. Worst case: O(n · n!) but pruning + early exit keep real builds fast | 23/23, ~0.015ms total avg |
 
 All algorithms extending `SkillpointChecker` implement:
 ```java
@@ -82,3 +82,11 @@ Tests are in `src/test/java/skillpoints/SkillpointTest.java`. They use JUnit 5 p
 **Adding a test case:** add an entry to `testCases()`.
 
 **Adding an algorithm:** add an entry to `algorithms()`.
+
+## Benchmark
+
+`SkillpointBenchmark.java` runs all test cases against all algorithms 1000 times (with 50 warmup iterations for JIT) and reports average runtimes per algorithm and per case.
+
+```bash
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./gradlew test --tests "skillpoints.SkillpointBenchmark"
+```
