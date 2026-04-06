@@ -21,6 +21,7 @@ public class WynnAlgorithm extends SkillpointChecker {
 		}
 		if (refresh) {
 			int num_masks = 1 << items.length;
+			cachedItems = items;
 			cachedMasks = IntStream.range(0, num_masks).toArray();
 		}
 	}

@@ -161,6 +161,9 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 			this.root = new GraphNode<T>(null);
 			this.numNodes = graph.size();
 			this.root.children = graph;
+			for (GraphNode<T> n : graph) {
+				n.visited = false;
+			}
 		}
 		@Override
 		public Iterator<GraphNode<T>[]> iterator() { return new CustomIter(); }
@@ -171,7 +174,6 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 			private GraphNode<T>[] buffer;
 
 			CustomIter() {
-				// Not your average for loop!
 				stack = (GraphNode<T>[]) Array.newInstance(GraphNode.class, numNodes + 1);
 				stack[0] = root;
 				advanceHelper(0);
@@ -246,16 +248,28 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 		boolean[] bestValid;
 		int evals;
 		List<WynnItem> items;
-		ItemSCCResult res;
+		ItemSCCResult sccData;
 
-		void setup(int[] initialSkillpoints, List<WynnItem> items, ItemSCCResult res) {
+		void update(int[] initialSkillpoints, List<WynnItem> items) {
 			this.bestViolations = items.size() + 1;
 			this.bestTotal = 0;
 			this.skillpointReal = initialSkillpoints;
 			this.bestValid = new boolean[items.size()];
 			this.evals = 0;
-			this.items = items;
-			this.res = res;
+			
+			boolean refresh = true;
+			if (this.items != null && items.size() == this.items.size()) {
+				refresh = false;
+				for (int i = 0; i < items.size(); ++i) {
+					if (items.get(i).equals(this.items.get(i))) continue;
+					refresh = true;
+					break;
+				}
+			}
+			if (refresh) {
+				this.items = items;
+				this.sccData = constructSCCGraph(items);
+			}
 		}
 	}
 
@@ -290,12 +304,12 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 		order[equipIndex] = itemIndex;
 	}
 	
-	private boolean permuteCheck(ItemSCCResult groupData, int index,
+	private boolean permuteCheck(int index,
 			int[] skillpointApplied, int[] skillpointRequired, int[] skillpointMin,
 			int[] order, int equipIndex, OptimizationContext ctx) {
 
 		// Last SCC is the terminal
-		if (index == groupData.sccs.size() - 1) {
+		if (index == ctx.sccData.sccs.size() - 1) {
 			ctx.evals += 1;
 			int violations = 0;
 			int[] skillpoints = ctx.skillpointReal.clone();
@@ -335,18 +349,18 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 			}
 			return violations == 0;
 		}
-		List<GraphNode<WynnItem>> scc = groupData.sccs.get(index);
+		List<GraphNode<WynnItem>> scc = ctx.sccData.sccs.get(index);
 
 		// TODO: can we do wynncraft's "fast application" for positive-only SCCs?
 		// I don't think so... since later steps may want different skews
 		if (scc.size() == 1) {
 			int itemIndex = scc.get(0).nodeIndex;
-			boolean negative = groupData.negatives[index][itemIndex];
+			boolean negative = ctx.sccData.negatives[index][itemIndex];
 
 			equipItem(scc.get(0).data, negative,
 					skillpointApplied, skillpointRequired, skillpointMin,
 					order, equipIndex, itemIndex);
-			return permuteCheck(groupData, index + 1, skillpointApplied, skillpointRequired, skillpointMin,
+			return permuteCheck(index + 1, skillpointApplied, skillpointRequired, skillpointMin,
 					order, equipIndex + 1, ctx);
 		}
 
@@ -357,7 +371,7 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 			int newIndex = equipIndex;
 			for (GraphNode<WynnItem> n : perm) {
 				int itemIndex = n.nodeIndex;
-				boolean negative = groupData.negatives[index][itemIndex];
+				boolean negative = ctx.sccData.negatives[index][itemIndex];
 				// order is always mutated (set before recursive call), this is safe
 				equipItem(n.data, negative,
 						localApplied, localRequired, localMin,
@@ -365,7 +379,7 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 				newIndex += 1;
 				// TODO: ANY level of pruning at all LOL
 			}
-			if (permuteCheck(groupData, index + 1, localApplied, localRequired, localMin,
+			if (permuteCheck(index + 1, localApplied, localRequired, localMin,
 					order, equipIndex + scc.size(), ctx)) {
 				return true;
 			}
@@ -387,13 +401,12 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 			indices.add(i);
 		}
 		
-		ItemSCCResult res = constructSCCGraph(toCheck);
-		ctx.setup(assignedSkillpoints, toCheck, res);
+		ctx.update(assignedSkillpoints, toCheck);
 //		System.out.println("SCC stats:");
 //		for (List<GraphNode<WynnItem>> scc : res.sccs) {
 //			System.out.println(scc.size());
 //		}
-		permuteCheck(res, 1, new int[5], new int[5], new int[5], new int[toCheck.size()], 0, ctx);
+		permuteCheck(1, new int[5], new int[5], new int[5], new int[toCheck.size()], 0, ctx);
 //		System.out.println(ctx.evals + " evals.");
 		if (ctx.bestOrder == null) {
 			return new boolean[items.length];
