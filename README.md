@@ -46,11 +46,12 @@ Given a set of items (each with skillpoint requirements and bonuses) and a playe
 
 ## Algorithms
 
-| Class | Approach | Status |
-|-------|----------|--------|
-| `WynnAlgorithm` | Greedy positives + 2^n negative-mask enumeration | **Buggy** — fails dependency chains, crashes on edge cases |
-| `SCCGraphAlgorithm` | Dependency graph → Kosaraju SCC → permute within SCCs | Correct but exponential in SCC size |
-| `OptimizedDFS` | DFS with dominance pruning + bitmask memoization | Different interface (returns equip order, not `boolean[]`) |
+| Class | Approach | Worst-case Time | Status |
+|-------|----------|-----------------|--------|
+| `WynnAlgorithm` | Greedy positives + 2^n negative-mask enumeration | O(n² · 2^q), q = negative items. All-negative worst case: O(n² · 2^n) | 22/23, ~3ms total |
+| `SCCGraphAlgorithm` | Dependency graph → Kosaraju SCC → permute within SCCs | O(n · ∏mᵢ!) across SCC sizes mᵢ. Single-SCC worst case: O(n · n!) | 14/23, ~4.7ms total |
+| `OptimizedDFS` | DFS with dominance pruning + bitmask memoization | O(m · 2^m), m = non-free items after preprocessing (hard-coded m ≤ 8) | 20/23, ~9ms total |
+| `WynnSolverAlgorithm` | Free-item activation + backtracking over activation orderings with cascade validity | O(n · k!), k = non-free items. Worst case: O(n · n!) but pruning + early exit keep real builds fast | 23/23, ~0.25ms total |
 
 All algorithms extending `SkillpointChecker` implement:
 ```java
