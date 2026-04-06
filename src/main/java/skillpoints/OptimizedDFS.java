@@ -1,10 +1,6 @@
 package skillpoints;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -17,7 +13,7 @@ public class OptimizedDFS {
 
     static final int TRIAL_COUNT = 100;
 
-    public static void testMain(String[] args) {
+    public static void main(String[] args) {
         Random random = new Random();
 
         int solved = 0, infeasible = 0;
@@ -35,6 +31,10 @@ public class OptimizedDFS {
                     .toArray(int[][]::new);
 
             int[] trialStartStats = IntStream.range(0, 5).map(i -> random.nextInt(50)).toArray();
+
+            trialReqs = new int[][]{{1, 0, 0, 0, 0}, {0, 2, 0, 0, 0}, {1, 0, 0, 0, 0}};
+            trialDeltas = new int[][]{{-1, 2, 0, 0, 0}, {1, 0, 0, 0, 0}, {0, 0, 1, 0, 0}};
+            trialStartStats = new int[]{2, 0, 0, 0, 0};
 
             if (trial == 1) solve(trialReqs.clone(), trialDeltas.clone(), trialStartStats.clone());
 
@@ -58,9 +58,11 @@ public class OptimizedDFS {
     }
 
     public static int[] solve(List<WynnItem> items, int[] stats) {
+        int[] s = stats.clone();
         int[] result = solve(items.stream().map(WynnItem::requirements).map(a -> Arrays.stream(a).map(x -> x == 0 ? Integer.MIN_VALUE : x).toArray()).toArray(int[][]::new),
                      items.stream().map(WynnItem::bonuses).toArray(int[][]::new),
                      stats);
+//        startStats = s;
 //        System.out.println("Order: " + Arrays.toString(result));
 //        printOrder(result);
         return result;
@@ -167,13 +169,6 @@ public class OptimizedDFS {
         });
         items = Arrays.stream(boxed).mapToInt(Integer::intValue).toArray();
 
-        int[] maxPossibleGain = new int[s];
-        for (int item : items) {
-            for (int k = 0; k < s; k++) {
-                if (deltas[item][k] > 0) maxPossibleGain[k] += deltas[item][k];
-            }
-        }
-
         Arrays.fill(seen, false);
 
         boolean[] used = new boolean[n];
@@ -183,18 +178,14 @@ public class OptimizedDFS {
         int[] initialMaxRequirements = new int[s];
         Arrays.fill(initialMaxRequirements, Integer.MIN_VALUE);
 
-        boolean foundFull = dfs(
-                items, used, 0L, order, 0,
-                stats.clone(), mustBeforeMask, bestResult,
-                initialMaxRequirements, bestOrderInfo, maxPossibleGain.clone()
-        );
+        boolean foundFull = dfs(items, used, 0L, order, 0, stats.clone(), mustBeforeMask, bestResult, initialMaxRequirements, bestOrderInfo);
 
         if (foundFull)
             return bestResult;
         return Arrays.copyOf(bestResult, bestOrderInfo[0]);
     }
 
-    private static boolean dfs(int[] items, boolean[] used, long usedMask, int[] order, int depth, int[] stats, long[] mustBeforeMask, int[] bestResult, int[] maxRequirements, int[] bestOrderInfo, int[] remainingGain) {
+    private static boolean dfs(int[] items, boolean[] used, long usedMask, int[] order, int depth, int[] stats, long[] mustBeforeMask, int[] bestResult, int[] maxRequirements, int[] bestOrderInfo) {
         if (depth > bestOrderInfo[0]) {
             bestOrderInfo[0] = depth;
             System.arraycopy(order, 0, bestResult, 0, depth);
@@ -205,7 +196,7 @@ public class OptimizedDFS {
             int item = items[idx];
 
             if (used[item]) continue;
-            if ((mustBeforeMask[item] & ~usedMask) != 0) continue;
+            if ((mustBeforeMask[idx] & ~usedMask) != 0) continue;
             if (!canEquip(stats, reqs[item])) continue;
 
             used[item] = true;
@@ -222,17 +213,13 @@ public class OptimizedDFS {
 
             boolean viable = canEquip(stats, maxRequirements);
 
-            for (int k = 0; k < s; k++) {
-                if (deltas[item][k] > 0) remainingGain[k] -= deltas[item][k];
-            }
-
-            if (viable && dfs(items, used, newUsedMask, order, depth + 1, stats, mustBeforeMask, bestResult, maxRequirements, bestOrderInfo, remainingGain)) {
-                revertState(item, stats, remainingGain);
+            if (viable && dfs(items, used, newUsedMask, order, depth + 1, stats, mustBeforeMask, bestResult, maxRequirements, bestOrderInfo)) {
+                revertState(item, stats);
                 System.arraycopy(prevMaxReqs, 0, maxRequirements, 0, maxRequirements.length);
                 used[item] = false;
                 return true;
             }
-            revertState(item, stats, remainingGain);
+            revertState(item, stats);
             System.arraycopy(prevMaxReqs, 0, maxRequirements, 0, maxRequirements.length);
             used[item] = false;
         }
@@ -240,10 +227,9 @@ public class OptimizedDFS {
         return false;
     }
 
-    public static void revertState(int item, int[] stats, int[] remainingGain) {
+    public static void revertState(int item, int[] stats) {
         for (int k = 0; k < s; k++) {
-        	stats[k] -= deltas[item][k];
-            if (deltas[item][k] > 0) remainingGain[k] += deltas[item][k];
+            stats[k] -= deltas[item][k];
         }
     }
 
