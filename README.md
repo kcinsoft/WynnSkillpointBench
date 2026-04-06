@@ -2,6 +2,12 @@
 
 Benchmark and correctness testing for Wynncraft skillpoint equip-ordering algorithms.
 
+## Current Standings
+
+<img width="599" height="173" alt="image" src="https://github.com/user-attachments/assets/25dd15ce-179f-447e-98c9-3f76c8eca7f0" />
+
+<img width="628" height="183" alt="image" src="https://github.com/user-attachments/assets/dde6c133-4f1e-4cef-a7ce-88f8fe7dbcd2" />
+
 ## Skill Point Algorithm Bounty
 
 Wynncraft is seeking an optimized **Skill Point allocation algorithm** capable of efficiently validating and maximizing equipment combinations under strict performance constraints.
