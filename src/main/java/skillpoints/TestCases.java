@@ -12,8 +12,8 @@ public final class TestCases {
             String name,
             WynnItem[] items,
             int[] assignedSkillpoints,
-            boolean[] expectedEquippable
-    ) {}
+            boolean[] expectedEquippable) {
+    }
 
     /** All test cases, keyed by name. Insertion-ordered. */
     public static final Map<String, TestCase> ALL = new LinkedHashMap<>();
@@ -51,6 +51,15 @@ public final class TestCases {
                         new WynnItem(new int[] { 1, 0, 0, 0, 0 }, new int[] { 0, 2, -1, 0, 0 }),
                         new WynnItem(new int[] { 0, 2, 0, 0, 0 }, new int[] { 0, 0, 1, 0, 0 }),
                         new WynnItem(new int[] { 0, 0, 1, 0, 0 }, new int[] { 0, 0, 0, 1, 0 }),
+                },
+                new int[] { 1, 0, 1, 0, 0 },
+                new boolean[] { true, true, true });
+
+        add("case2_strictChain_cab",
+                new WynnItem[] {
+                        new WynnItem(new int[] { 0, 0, 1, 0, 0 }, new int[] { 0, 0, 0, 1, 0 }),
+                        new WynnItem(new int[] { 1, 0, 0, 0, 0 }, new int[] { 0, 2, -1, 0, 0 }),
+                        new WynnItem(new int[] { 0, 2, 0, 0, 0 }, new int[] { 0, 0, 1, 0, 0 }),
                 },
                 new int[] { 1, 0, 1, 0, 0 },
                 new boolean[] { true, true, true });
@@ -266,5 +275,6 @@ public final class TestCases {
         ALL.put(name, new TestCase(name, items, sp, expected));
     }
 
-    private TestCases() {}
+    private TestCases() {
+    }
 }

@@ -4,7 +4,7 @@ Benchmark and correctness testing for Wynncraft skillpoint equip-ordering algori
 
 ## Current Standings
 
-<img width="790" height="198" alt="image" src="https://github.com/user-attachments/assets/3d604bfa-a686-4689-9954-90eb5722cf94" />
+<img width="791" height="194" alt="image" src="https://github.com/user-attachments/assets/5d595035-94c4-4295-9d3c-900177acb9a5" />
 
 <img width="651" height="199" alt="image" src="https://github.com/user-attachments/assets/96b277b9-6875-4a68-905c-739d609bc878" />
 
