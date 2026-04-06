@@ -323,7 +323,7 @@ public class SCCGraphAlgorithm extends SkillpointChecker {
 					continue;
 				}
 				for (int i = 0; i < WynnItem.NUM_SKILLPOINTS; ++i) {
-					if (item.bonuses[i] + skillpoints[i] < localMin[i]) {
+					if (item.bonuses[i] + skillpoints[i] < localMin[i] && localMin[i] != 0) {
 						// Pop negative items... if they would force earlier items to pop :sob:
 						continue applyLoop;
 					}
