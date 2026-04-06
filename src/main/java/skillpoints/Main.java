@@ -33,7 +33,7 @@ public class Main {
 //		             new int[]{  7,  0,  0, -3,  0}),
 //		};
 //		int[] skillpoints = new int[] {21, 40, 73, 28, 29};
-		WynnItem[] items = new WynnItem[]{	// This case gives failures for d0cr and wynn algorithm, currently.
+		WynnItem[] items = new WynnItem[]{	// This case gives failures for wynn algorithm, currently.
 											// The only valid equip order is a -> b -> c.
 		new WynnItem(new int[]{  1,  0,  0,  0,  0},	// a
 				     new int[]{  0,  2, -1,  0,  0}),
