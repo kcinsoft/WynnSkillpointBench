@@ -59,6 +59,7 @@ public class SkillpointTest {
                 Named.of("SCCGraphAlgorithm", new SCCGraphAlgorithm()),
                 Named.of("OptimizedDFS", new OptimizedDFSChecker()),
                 Named.of("WynnSolver", new WynnSolverAlgorithm()),
+                Named.of("My First Algorithm", new MyFirstAlgorithm()),
                 Named.of("CascadeBound", new CascadeBoundChecker()));
     }
 
