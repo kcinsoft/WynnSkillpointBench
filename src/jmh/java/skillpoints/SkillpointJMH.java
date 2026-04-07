@@ -29,6 +29,7 @@ public class SkillpointJMH {
             "SCCGraphAlgorithm",
             "OptimizedDFS",
             "WynnSolver",
+            "CascadeBound",
             "GreedyAlgorithm"
     })
     String algoName;
@@ -63,8 +64,10 @@ public class SkillpointJMH {
     // ── Resolved state ───────────────────────────────────────────────────
 
     private SkillpointChecker checker;
-    private WynnItem[] items;
-    private int[] assignedSkillpoints;
+    private WynnItem[] baseItems;
+    private int[] baseAssignedSkillpoints;
+    private WynnItem[] benchmarkItems;
+    private int[] benchmarkAssignedSkillpoints;
 
     @Setup(Level.Trial)
     public void setup() {
@@ -73,6 +76,7 @@ public class SkillpointJMH {
             case "SCCGraphAlgorithm" -> new SCCGraphAlgorithm();
             case "OptimizedDFS" -> new OptimizedDFSChecker();
             case "WynnSolver" -> new WynnSolverAlgorithm();
+            case "CascadeBound" -> new CascadeBoundChecker();
             case "GreedyAlgorithm" -> new GreedyAlgorithm();
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
         };
@@ -80,13 +84,25 @@ public class SkillpointJMH {
         var tc = TestCases.ALL.get(caseName);
         if (tc == null)
             throw new IllegalArgumentException("Unknown test case: " + caseName);
-        items = tc.items();
-        assignedSkillpoints = tc.assignedSkillpoints();
+        baseItems = tc.items();
+        baseAssignedSkillpoints = tc.assignedSkillpoints();
+        if (!(checker instanceof GreedyAlgorithm)) {
+            benchmarkItems = SkillpointTest.cloneItems(baseItems);
+            benchmarkAssignedSkillpoints = baseAssignedSkillpoints.clone();
+        }
     }
 
     @Benchmark
     public boolean[] bench(Blackhole bh) {
-        boolean[] result = checker.check(items, assignedSkillpoints);
+        boolean[] result;
+        if (checker instanceof GreedyAlgorithm) {
+            result = checker.check(
+                SkillpointTest.cloneItems(baseItems),
+                baseAssignedSkillpoints.clone()
+            );
+        } else {
+            result = checker.check(benchmarkItems, benchmarkAssignedSkillpoints);
+        }
         bh.consume(result);
         return result;
     }

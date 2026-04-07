@@ -53,7 +53,8 @@ public class Main {
 //		int[] skillpoints = new int[] {1, 0, 1, 0, 0};
 
 //		SkillpointChecker solver = new WynnAlgorithm();
-		SCCGraphAlgorithm solver = new SCCGraphAlgorithm();
+//		SkillpointChecker solver = new SCCGraphAlgorithm();
+		SkillpointChecker solver = new CascadeBoundChecker();
 		solver.check(items0, skillpoints);
 		solver.check(items, skillpoints);
 //		solver.check(items, skillpoints);
@@ -66,14 +67,8 @@ public class Main {
 
 		long l2 = System.nanoTime();
 		System.out.println("Solve took " + ((l2-l1) / 1e6) + " ms");
-		System.out.println("SCC Graph construction took " + solver.ctx.sccData.elapsedNS / 1000000.0 + " ms");
-		int[] result = solver.ctx.bestOrder;
-		System.out.println(solver.ctx.evals + " evals.");
 		for (boolean b : equipOK) {
 			System.out.println(b);
 		}
-//		for (int i : result) {
-//			System.out.println(i);
-//		}
 	}
 }
