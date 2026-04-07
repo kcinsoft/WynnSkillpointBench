@@ -269,6 +269,20 @@ public final class TestCases {
                 },
                 new int[] { 37, 70, 0, 0, 0 },
                 new boolean[] { false, false });
+
+        add("case21_repurposedVessels",
+                new WynnItem[] {
+                        new WynnItem(new int[] { 0, 45, 0, 45, 0 }, new int[] { 30, -3, -3, -3, -3 }),
+                },
+                new int[] { 0, 48, 0, 48, 0 },
+                new boolean[] { true });
+
+        add("case21_repurposedVessels_fail",
+                new WynnItem[] {
+                        new WynnItem(new int[] { 0, 45, 0, 45, 0 }, new int[] { 30, -3, -3, -3, -3 }),
+                },
+                new int[] { 0, 45, 0, 45, 0 },
+                new boolean[] { true });
     }
 
     private static void add(String name, WynnItem[] items, int[] sp, boolean[] expected) {

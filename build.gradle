@@ -112,12 +112,12 @@ tasks.register('jmhReport') {
         def fastest = summaryRows[0].mean
 
         println "\n${'─' * 72}"
-        printf  "  %-25s %10s %10s %10s %10s%n", 'Algorithm', "Mean($unit)", 'Median', 'Best', 'vs 1st'
+        printf  "  %-25s %10s %10s %10s %10s%n", 'Algorithm', "Mean($unit)", 'Median', 'Worst', 'vs 1st'
         println "  ${'─' * 70}"
         summaryRows.each { r ->
             def ratio = r.mean / fastest
             printf "  %-25s %10.3f %10.3f %10.3f %9.1fx%n",
-                   r.algo, r.mean, r.median, r.best, ratio
+                   r.algo, r.mean, r.median, r.worst, ratio
         }
         println "${'=' * 72}"
     }
