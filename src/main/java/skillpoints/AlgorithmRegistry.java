@@ -22,6 +22,8 @@ public final class AlgorithmRegistry {
         REGISTRY.put("MySecondAlgorithm",   MySecondAlgorithm::new);
         REGISTRY.put("TheThirdAlgorithm",   TheThirdAlgorithm::new);
         REGISTRY.put("OurSecondAlgorithm",  OurSecondAlgorithm::new);
+        REGISTRY.put("CachingThirdAlgorithm", CachingThirdAlgorithm::new);
+        REGISTRY.put("TheFourthAlgorithm", TheFourthAlgorithm::new);
         REGISTRY.put("GreedyAlgorithm",     GreedyAlgorithm::new);
     }
 
