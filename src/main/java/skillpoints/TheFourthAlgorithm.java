@@ -194,9 +194,11 @@ public class TheFourthAlgorithm extends SkillpointChecker
 
         // ── Phase 3: Packed BitmaskDP with lazy computation + bitset BFS
         //    Optimization 1A: bit-iteration over absent items
+        //    Optimization 1B: globalMaxReq batch requirement check
         final int totalMasks = 1 << remainingCount;
         final int fullMask = totalMasks - 1;
 
+        long globalMaxReq = 0;
         for (int j = 0; j < remainingCount; j++)
         {
             final int[] req = items[remainingIndices[j]].requirements;
@@ -204,6 +206,7 @@ public class TheFourthAlgorithm extends SkillpointChecker
             pReq[j] = packReq(req);
             pNeed[j] = packNeed(req, bon);
             pBon[j] = pack5(bon[0], bon[1], bon[2], bon[3], bon[4]);
+            globalMaxReq = max5(globalMaxReq, pReq[j]);
         }
 
         final long[] sn = this.skillNeed;
@@ -245,13 +248,16 @@ public class TheFourthAlgorithm extends SkillpointChecker
                 long curMn = sn[(mask << 1) + 1];
                 int curW = maskWeight; // 3A: reuse maskWeight instead of re-reading weight[mask]
 
+                // 1B: if skills exceed ALL items' requirements, skip per-item ge5
+                boolean allReqsMet = ge5(curSk, globalMaxReq);
+
                 // 1A: iterate only absent items via bit manipulation
                 for (int absent = fullMask & ~mask; absent != 0; absent &= absent - 1)
                 {
                     int j = Integer.numberOfTrailingZeros(absent);
                     int nextMask = mask | (1 << j);
                     if ((reach[nextMask >>> 6] & (1L << (nextMask & 63))) != 0) continue;
-                    if (!ge5(curSk, pReq[j])) continue;
+                    if (!allReqsMet && !ge5(curSk, pReq[j])) continue;
                     long nextSk = curSk + pBon[j] - BIAS5;
                     if (hasNegativeBonus[j])
                     {
