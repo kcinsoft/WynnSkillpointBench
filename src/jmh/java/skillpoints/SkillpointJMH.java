@@ -24,16 +24,7 @@ public class SkillpointJMH {
 
     // ── Parameters (JMH enumerates all combinations) ─────────────────────
 
-    @Param({
-            "WynnAlgorithm",
-            "SCCGraphAlgorithm",
-            "WynnSolver",
-            "CascadeBound",
-            "MyFirstAlgorithm",
-            "MySecondAlgorithm",
-            "OurSecondAlgorithm",
-            "TheThirdAlgorithm",
-    })
+    @Param({}) // populated automatically from AlgorithmRegistry via build.gradle
     String algoName;
 
     @Param({
@@ -73,17 +64,7 @@ public class SkillpointJMH {
 
     @Setup(Level.Trial)
     public void setup() {
-        checker = switch (algoName) {
-            case "WynnAlgorithm" -> new WynnAlgorithm();
-            case "SCCGraphAlgorithm" -> new SCCGraphAlgorithm();
-            case "WynnSolver" -> new WynnSolverAlgorithm();
-            case "CascadeBound" -> new CascadeBoundChecker();
-            case "MyFirstAlgorithm" -> new MyFirstAlgorithm();
-            case "MySecondAlgorithm" -> new MySecondAlgorithm();
-            case "TheThirdAlgorithm" -> new TheThirdAlgorithm();
-            case "OurSecondAlgorithm" -> new OurSecondAlgorithm();
-            default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
-        };
+        checker = AlgorithmRegistry.create(algoName);
 
         var tc = TestCases.ALL.get(caseName);
         if (tc == null)

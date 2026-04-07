@@ -32,16 +32,7 @@ public class EquipSequenceJMH {
 
     // ── Parameters ──────────────────────────────────────────────────────
 
-    @Param({
-            "WynnAlgorithm",
-            "SCCGraphAlgorithm",
-            "WynnSolver",
-            "CascadeBound",
-            "MyFirstAlgorithm",
-            "MySecondAlgorithm",
-            "TheThirdAlgorithm",
-            "OurSecondAlgorithm",
-    })
+    @Param({}) // populated automatically from AlgorithmRegistry via build.gradle
     String algoName;
 
     @Param({
@@ -72,17 +63,7 @@ public class EquipSequenceJMH {
 
     @Setup(Level.Trial)
     public void setup() {
-        checker = switch (algoName) {
-            case "WynnAlgorithm" -> new WynnAlgorithm();
-            case "SCCGraphAlgorithm" -> new SCCGraphAlgorithm();
-            case "WynnSolver" -> new WynnSolverAlgorithm();
-            case "CascadeBound" -> new CascadeBoundChecker();
-            case "MyFirstAlgorithm" -> new MyFirstAlgorithm();
-            case "MySecondAlgorithm" -> new MySecondAlgorithm();
-            case "TheThirdAlgorithm" -> new TheThirdAlgorithm();
-            case "OurSecondAlgorithm" -> new OurSecondAlgorithm();
-            default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
-        };
+        checker = AlgorithmRegistry.create(algoName);
         needsClone = checker instanceof GreedyAlgorithm;
 
         var tc = TestCases.ALL.get(caseName);

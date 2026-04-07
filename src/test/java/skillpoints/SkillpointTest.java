@@ -53,16 +53,8 @@ public class SkillpointTest {
     // -- Algorithms under test ---------------------------------------------
 
     static Stream<Named<SkillpointChecker>> algorithms() {
-        return Stream.of(
-                Named.of("WynnAlgorithm", new WynnAlgorithm()),
-                Named.of("SCCGraphAlgorithm", new SCCGraphAlgorithm()),
-                Named.of("WynnSolver", new WynnSolverAlgorithm()),
-                Named.of("CascadeBound", new CascadeBoundChecker()),
-                Named.of("My First Algorithm", new MyFirstAlgorithm()),
-                Named.of("My Second Algorithm", new MySecondAlgorithm()),
-                Named.of("The Third Algorithm", new TheThirdAlgorithm()),
-                Named.of("OurSecondAlgorithm", new OurSecondAlgorithm())
-            );
+        return AlgorithmRegistry.all().entrySet().stream()
+                .map(e -> Named.of(e.getKey(), e.getValue().get()));
     }
 
     static WynnItem[] cloneItems(WynnItem[] items) {

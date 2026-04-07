@@ -30,6 +30,14 @@ application {
 	mainClass = "skillpoints.Main"
 }
 
+// Extract algorithm names from AlgorithmRegistry.java (single source of truth)
+ext.algoNames = {
+    def text = file('src/main/java/skillpoints/AlgorithmRegistry.java').text
+    def names = []
+    (text =~ /REGISTRY\.put\("([^"]+)"/).each { m -> names << m[1] }
+    return names
+}
+
 jmh {
     warmupIterations = 1
     iterations = 3
@@ -39,6 +47,7 @@ jmh {
     timeUnit = 'us'
     benchmarkMode = ['avgt']
     resultFormat = 'JSON'
+    benchmarkParameters = ['algoName': algoNames()]
     // Pass -Pbm=<regex> to filter, e.g. ./gradlew jmh -Pbm="SkillpointJMH"
     if (project.hasProperty('bm')) {
         includes = [project.property('bm')]
@@ -70,9 +79,8 @@ tasks.register('jmhRun', JavaExec) {
     args '-wi', '1', '-i', '3', '-f', '1', '-w', '200ms', '-r', '200ms',
          '-tu', 'us', '-bm', 'avgt', '-rf', 'json', '-rff', resultsFile.absolutePath
 
-    if (project.hasProperty('algo')) {
-        args '-p', "algoName=${project.property('algo')}"
-    }
+    // Default to all registered algorithms; -Palgo overrides
+    args '-p', "algoName=${project.hasProperty('algo') ? project.property('algo') : algoNames().join(',')}"
     if (project.hasProperty('case')) {
         args '-p', "caseName=${project.property('case')}"
     }

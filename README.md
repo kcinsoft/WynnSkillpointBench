@@ -129,12 +129,8 @@ Tests are in `src/test/java/skillpoints/SkillpointTest.java`. They use JUnit 5 p
 **Adding an algorithm:**
 
 1. Create your class in `src/main/java/skillpoints/`, extending `SkillpointChecker`
-2. Add a `Named.of(...)` entry to `algorithms()` in `SkillpointTest.java`
-3. Add your algo name to the `@Param` `algoName` list in both:
-   - `src/jmh/java/skillpoints/SkillpointJMH.java`
-   - `src/jmh/java/skillpoints/EquipSequenceJMH.java`
-4. Add a `case` to the `switch` in `setup()` in both JMH files
-5. Run tests and benchmarks:
+2. Add a `REGISTRY.put(...)` entry to `AlgorithmRegistry.java`
+3. Run tests and benchmarks:
    ```bash
    ./gradlew test
    ./gradlew jmhRun -Palgo=YourAlgorithm
