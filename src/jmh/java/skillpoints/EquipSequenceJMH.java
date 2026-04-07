@@ -39,6 +39,7 @@ public class EquipSequenceJMH {
             "CascadeBound",
             "MyFirstAlgorithm",
             "MySecondAlgorithm",
+            "TheThirdAlgorithm",
             "OurSecondAlgorithm",
     })
     String algoName;
@@ -78,6 +79,7 @@ public class EquipSequenceJMH {
             case "CascadeBound" -> new CascadeBoundChecker();
             case "MyFirstAlgorithm" -> new MyFirstAlgorithm();
             case "MySecondAlgorithm" -> new MySecondAlgorithm();
+            case "TheThirdAlgorithm" -> new TheThirdAlgorithm();
             case "OurSecondAlgorithm" -> new OurSecondAlgorithm();
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
         };
