@@ -15,30 +15,33 @@ Benchmark and correctness testing for Wynncraft skillpoint equip-ordering algori
 | MySecondAlgorithm | 26 | 0 | 26 |
 | WynnAlgorithm | 24 | 2 | 26 |
 | SCCGraphAlgorithm | 26 | 0 | 26 |
+| TheThirdAlgorithm | 26 | 0 | 26 |
 
 ### Equip Sequence Performance
 
 | Algorithm | Mean(us/op) | Median | Worst | vs 1st |
 |---|---:|---:|---:|---:|
-| OurSecondAlgorithm | 8.192 | 7.512 | 12.309 | 1.0x |
-| MyFirstAlgorithm | 8.243 | 7.867 | 12.457 | 1.0x |
-| MySecondAlgorithm | 8.480 | 7.946 | 13.785 | 1.0x |
-| CascadeBound | 11.432 | 11.157 | 13.406 | 1.4x |
-| WynnAlgorithm | 35.366 | 24.262 | 76.917 | 4.3x |
-| WynnSolver | 53.988 | 20.766 | 306.829 | 6.6x |
-| SCCGraphAlgorithm | 57.009 | 52.482 | 90.986 | 7.0x |
+| TheThirdAlgorithm | 4.808 | 4.580 | 6.834 | 1.0x |
+| OurSecondAlgorithm | 5.838 | 5.364 | 9.686 | 1.2x |
+| MyFirstAlgorithm | 8.243 | 7.867 | 12.457 | 1.7x |
+| MySecondAlgorithm | 8.480 | 7.946 | 13.785 | 1.8x |
+| CascadeBound | 11.432 | 11.157 | 13.406 | 2.4x |
+| WynnAlgorithm | 35.366 | 24.262 | 76.917 | 7.4x |
+| WynnSolver | 53.988 | 20.766 | 306.829 | 11.2x |
+| SCCGraphAlgorithm | 57.009 | 52.482 | 90.986 | 11.9x |
 
 ### Unrepresentative Full Performance
 
 | Algorithm | Mean(us/op) | Median | Worst | vs 1st |
 |---|---:|---:|---:|---:|
-| MySecondAlgorithm | 0.053 | 0.054 | 0.106 | 1.0x |
-| OurSecondAlgorithm | 0.054 | 0.058 | 0.103 | 1.0x |
-| MyFirstAlgorithm | 0.065 | 0.048 | 0.132 | 1.2x |
-| WynnSolver | 0.137 | 0.084 | 0.285 | 2.6x |
-| CascadeBound | 0.183 | 0.149 | 0.349 | 3.4x |
-| WynnAlgorithm | 0.583 | 0.468 | 2.124 | 11.0x |
-| SCCGraphAlgorithm | 0.969 | 0.809 | 3.518 | 18.3x |
+| TheThirdAlgorithm | 0.047 | 0.036 | 0.105 | 1.0x |
+| MySecondAlgorithm | 0.051 | 0.055 | 0.108 | 1.1x |
+| OurSecondAlgorithm | 0.054 | 0.058 | 0.103 | 1.1x |
+| MyFirstAlgorithm | 0.065 | 0.048 | 0.132 | 1.4x |
+| WynnSolver | 0.137 | 0.084 | 0.285 | 2.9x |
+| CascadeBound | 0.183 | 0.149 | 0.349 | 3.9x |
+| WynnAlgorithm | 0.583 | 0.468 | 2.124 | 12.4x |
+| SCCGraphAlgorithm | 0.969 | 0.809 | 3.518 | 20.6x |
 
 ## Skill Point Algorithm Bounty
 
