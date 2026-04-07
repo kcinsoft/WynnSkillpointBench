@@ -34,7 +34,6 @@ public final class CascadeBoundChecker extends SkillpointChecker {
 
         SearchContext context = new SearchContext(
             prepared.itemCount,
-            prepared.maskLimit,
             prepared.fullMask,
             prepared.requirements,
             prepared.bonuses,
@@ -206,7 +205,6 @@ public final class CascadeBoundChecker extends SkillpointChecker {
 
     private static final class SearchContext {
         private final int itemCount;
-        private final int maskLimit;
         private final int fullMask;
         private final int[] requirements;
         private final int[] bonuses;
@@ -223,10 +221,12 @@ public final class CascadeBoundChecker extends SkillpointChecker {
         private int bestMask;
         private int bestCount;
         private int bestScore;
+        private int closureMask;
+        private int closureCount;
+        private int closureScore;
 
         private SearchContext(
             int itemCount,
-            int maskLimit,
             int fullMask,
             int[] requirements,
             int[] bonuses,
@@ -241,7 +241,6 @@ public final class CascadeBoundChecker extends SkillpointChecker {
             boolean[] visitedMask
         ) {
             this.itemCount = itemCount;
-            this.maskLimit = maskLimit;
             this.fullMask = fullMask;
             this.requirements = requirements;
             this.bonuses = bonuses;
@@ -257,14 +256,12 @@ public final class CascadeBoundChecker extends SkillpointChecker {
         }
 
         private void run() {
-            int startMask = applyForcedClosure(0, 0, 0, 0);
-            int startCount = Integer.bitCount(startMask);
-            int startScore = scoreMask(startMask);
-            bestMask = startMask;
-            bestCount = startCount;
-            bestScore = startScore;
-            if (startMask != fullMask) {
-                dfs(startMask, 0, startCount, startScore);
+            applyForcedClosure(0, 0, 0, 0);
+            bestMask = closureMask;
+            bestCount = closureCount;
+            bestScore = closureScore;
+            if (closureMask != fullMask) {
+                dfs(closureMask, 0, closureCount, closureScore);
             }
         }
 
@@ -276,9 +273,6 @@ public final class CascadeBoundChecker extends SkillpointChecker {
             }
             if (mask == fullMask) {
                 return true;
-            }
-            if (count + (itemCount - count) < bestCount) {
-                return false;
             }
             if (visitedMask[mask]) {
                 return false;
@@ -336,17 +330,15 @@ public final class CascadeBoundChecker extends SkillpointChecker {
                 needStack[nextNeedOffset + 3] = need3;
                 needStack[nextNeedOffset + 4] = need4;
 
-                int nextMask = applyForcedClosure(mask | itemBit, depth + 1, count + 1, score + itemScores[itemIndex]);
-                int nextCount = Integer.bitCount(nextMask);
-                int nextScore = scoreMask(nextMask);
-                if (dfs(nextMask, depth + 1, nextCount, nextScore)) {
+                applyForcedClosure(mask | itemBit, depth + 1, count + 1, score + itemScores[itemIndex]);
+                if (dfs(closureMask, depth + 1, closureCount, closureScore)) {
                     return true;
                 }
             }
             return false;
         }
 
-        private int applyForcedClosure(int mask, int depth, int count, int score) {
+        private void applyForcedClosure(int mask, int depth, int count, int score) {
             int currentOffset = depth * WynnItem.NUM_SKILLPOINTS;
             boolean changed;
             do {
@@ -405,17 +397,9 @@ public final class CascadeBoundChecker extends SkillpointChecker {
                 needStack[currentOffset + 3] = need3;
                 needStack[currentOffset + 4] = need4;
             } while (changed);
-            return mask;
-        }
-
-        private int scoreMask(int mask) {
-            int score = 0;
-            for (int itemIndex = 0; itemIndex < itemCount; itemIndex++) {
-                if ((mask & (1 << itemIndex)) != 0) {
-                    score += itemScores[itemIndex];
-                }
-            }
-            return score;
+            closureMask = mask;
+            closureCount = count;
+            closureScore = score;
         }
     }
 }
