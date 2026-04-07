@@ -31,7 +31,8 @@ public class SkillpointJMH {
             "WynnSolver",
             "CascadeBound",
             "GreedyAlgorithm",
-            "MyFirstAlgorithm"
+            "MyFirstAlgorithm",
+            "MySecondAlgorithm",
     })
     String algoName;
 
@@ -80,6 +81,7 @@ public class SkillpointJMH {
             case "CascadeBound" -> new CascadeBoundChecker();
             case "GreedyAlgorithm" -> new GreedyAlgorithm();
             case "MyFirstAlgorithm" -> new MyFirstAlgorithm();
+            case "MySecondAlgorithm" -> new MySecondAlgorithm();
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
         };
 
