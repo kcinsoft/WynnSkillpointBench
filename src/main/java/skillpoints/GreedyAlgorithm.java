@@ -59,15 +59,8 @@ public class GreedyAlgorithm extends SkillpointChecker {
             if (!hasNegative[i] && !hasRequirements) {
                 output[i] = true;
                 assignedSkillpoints = applyBonuses(assignedSkillpoints, item.bonuses);
-                continue;
             } else {
                 output[i] = false;
-            }
-            if (!hasNegative[i]) continue;
-            for (int s = 0; s < 5; s++) {
-                if (item.requirements[s] > 0 && item.bonuses[s] < 0) {
-                    item.requirements[s] -= item.bonuses[s];
-                }
             }
         }
 
