@@ -20,17 +20,18 @@ public class GreedyAlgorithm extends SkillpointChecker {
     }
 
     private int[] updateMinimums(int[] minimums, WynnItem item) {
+        int[] reqs = {item.requirements[0], item.requirements[1], item.requirements[2], item.requirements[3], item.requirements[4]};
         for (int s = 0; s < 5; s++) {
             if (item.requirements[s] > 0 && item.bonuses[s] > 0) {
-                item.requirements[s] += item.bonuses[s];
+                reqs[s] += item.bonuses[s];
             }
         }
         return new int[]{
-                Math.max(minimums[0], item.requirements[0]),
-                Math.max(minimums[1], item.requirements[1]),
-                Math.max(minimums[2], item.requirements[2]),
-                Math.max(minimums[3], item.requirements[3]),
-                Math.max(minimums[4], item.requirements[4])
+                Math.max(minimums[0], reqs[0]),
+                Math.max(minimums[1], reqs[1]),
+                Math.max(minimums[2], reqs[2]),
+                Math.max(minimums[3], reqs[3]),
+                Math.max(minimums[4], reqs[4])
         };
     }
 
@@ -38,6 +39,7 @@ public class GreedyAlgorithm extends SkillpointChecker {
     public boolean[] check(WynnItem[] items, int[] assignedSkillpoints) {
         boolean[] output = new boolean[items.length];
         boolean[] hasNegative = new boolean[items.length];
+        int[] sp = {assignedSkillpoints[0], assignedSkillpoints[1], assignedSkillpoints[2], assignedSkillpoints[3], assignedSkillpoints[4]};
         int[] minimums = {0, 0, 0, 0, 0};
         // Input pre-processing
         for (int i = 0; i < items.length; i++) {
@@ -58,16 +60,9 @@ public class GreedyAlgorithm extends SkillpointChecker {
             }
             if (!hasNegative[i] && !hasRequirements) {
                 output[i] = true;
-                assignedSkillpoints = applyBonuses(assignedSkillpoints, item.bonuses);
-                continue;
+                sp = applyBonuses(sp, item.bonuses);
             } else {
                 output[i] = false;
-            }
-            if (!hasNegative[i]) continue;
-            for (int s = 0; s < 5; s++) {
-                if (item.requirements[s] > 0 && item.bonuses[s] < 0) {
-                    item.requirements[s] -= item.bonuses[s];
-                }
             }
         }
 
@@ -77,8 +72,8 @@ public class GreedyAlgorithm extends SkillpointChecker {
             for (int i = 0; i < items.length; i++) {
                 if (output[i]) continue;
                 WynnItem item = items[i];
-                if (meetsReqs(assignedSkillpoints, item.requirements)) {
-                    int[] post = applyBonuses(assignedSkillpoints, item.bonuses);
+                if (meetsReqs(sp, item.requirements)) {
+                    int[] post = applyBonuses(sp, item.bonuses);
                     if (!meetsReqs(post, minimums)) continue;
                     int score = 0;
                     for (int j = 0; j < items.length; j++) {
@@ -93,7 +88,7 @@ public class GreedyAlgorithm extends SkillpointChecker {
             }
             if (best == -1) break;
             output[best] = true;
-            assignedSkillpoints = applyBonuses(assignedSkillpoints, items[best].bonuses);
+            sp = applyBonuses(sp, items[best].bonuses);
             minimums = updateMinimums(minimums, items[best]);
         }
 
