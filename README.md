@@ -4,9 +4,38 @@ Benchmark and correctness testing for Wynncraft skillpoint equip-ordering algori
 
 ## Current Standings
 
-<img width="787" height="237" alt="image" src="https://github.com/user-attachments/assets/11688740-b8b0-43c2-93ec-a23ce685916f" />
+### Full Test
 
-<img width="659" height="233" alt="image" src="https://github.com/user-attachments/assets/054d4b71-40f5-4c52-9e53-36f9e53b17ad" />
+| Algorithm | PASS | FAIL | TOTAL |
+|---|---|---|---|
+| MyFirstAlgorithm | 26 | 0 | 26 |
+| CascadeBoundChecker | 26 | 0 | 26 |
+| WynnSolverAlgorithm | 26 | 0 | 26 |
+| MySecondAlgorithm | 26 | 0 | 26 |
+| WynnAlgorithm | 24 | 2 | 26 |
+| SCCGraphAlgorithm | 26 | 0 | 26 |
+
+### Equip Sequence Performance
+
+| Algorithm | Mean(us/op) | Median | Worst | vs 1st |
+|---|---:|---:|---:|---:|
+| MySecondAlgorithm | 7.966 | 7.492 | 13.019 | 1.0x |
+| MyFirstAlgorithm | 8.168 | 7.492 | 13.329 | 1.0x |
+| CascadeBound | 11.396 | 10.817 | 13.416 | 1.4x |
+| WynnAlgorithm | 41.007 | 39.947 | 99.208 | 5.1x |
+| SCCGraphAlgorithm | 55.176 | 52.314 | 83.981 | 6.9x |
+| WynnSolver | 55.315 | 21.025 | 311.931 | 6.9x |
+
+### Unrepresentative Full Performance
+
+| Algorithm | Mean(us/op) | Median | Worst | vs 1st |
+|---|---:|---:|---:|---:|
+| MySecondAlgorithm | 0.056 | 0.060 | 0.112 | 1.0x |
+| MyFirstAlgorithm | 0.068 | 0.049 | 0.135 | 1.2x |
+| WynnSolver | 0.142 | 0.081 | 0.309 | 2.6x |
+| CascadeBound | 0.192 | 0.159 | 0.388 | 3.4x |
+| WynnAlgorithm | 0.647 | 0.474 | 3.222 | 11.6x |
+| SCCGraphAlgorithm | 0.946 | 0.834 | 3.361 | 17.0x |
 
 ## Skill Point Algorithm Bounty
 
@@ -117,3 +146,25 @@ java -jar build/libs/*-jmh.jar -wi 2 -i 3 -p algoName=WynnSolver
 ```
 
 Results are written to `build/results/jmh/results.json`.
+
+### Equip Sequence Benchmark
+
+`EquipSequenceJMH` simulates realistic item-by-item equipping. Instead of testing a single `check()` call with all items at once, it models how a player actually equips gear — one piece at a time, with the algorithm rerunning on each equip.
+
+For each full-build (8-item) test case:
+1. 8 seeded random permutations of equip order are generated
+2. For each permutation, items are added incrementally (1 item, then 2, …, then all 8), calling `check()` at each step
+3. Cache is preserved within a permutation but cleared between permutations
+
+Each `@Benchmark` invocation runs all 8 permutations (64 total `check()` calls). To add a new scenario, add an 8-item case to `TestCases.java` and list it in the `@Param` annotation in `EquipSequenceJMH.java`.
+
+```bash
+# Run only equip-sequence benchmarks
+./gradlew jmh -Pbm="EquipSequenceJMH"
+
+# Run only the per-case benchmarks (original)
+./gradlew jmh -Pbm="SkillpointJMH"
+
+# Specific algo/case via the JMH jar
+java -jar build/libs/*-jmh.jar -p algoName=WynnSolver -p caseName=case8_fullBuild_8items "EquipSequenceJMH"
+```

@@ -27,10 +27,8 @@ public class SkillpointJMH {
     @Param({
             "WynnAlgorithm",
             "SCCGraphAlgorithm",
-            "OptimizedDFS",
             "WynnSolver",
             "CascadeBound",
-            "GreedyAlgorithm",
             "MyFirstAlgorithm",
             "MySecondAlgorithm",
     })
@@ -76,10 +74,8 @@ public class SkillpointJMH {
         checker = switch (algoName) {
             case "WynnAlgorithm" -> new WynnAlgorithm();
             case "SCCGraphAlgorithm" -> new SCCGraphAlgorithm();
-            case "OptimizedDFS" -> new OptimizedDFSChecker();
             case "WynnSolver" -> new WynnSolverAlgorithm();
             case "CascadeBound" -> new CascadeBoundChecker();
-            case "GreedyAlgorithm" -> new GreedyAlgorithm();
             case "MyFirstAlgorithm" -> new MyFirstAlgorithm();
             case "MySecondAlgorithm" -> new MySecondAlgorithm();
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algoName);
@@ -101,9 +97,8 @@ public class SkillpointJMH {
         boolean[] result;
         if (checker instanceof GreedyAlgorithm) {
             result = checker.check(
-                SkillpointTest.cloneItems(baseItems),
-                baseAssignedSkillpoints.clone()
-            );
+                    SkillpointTest.cloneItems(baseItems),
+                    baseAssignedSkillpoints.clone());
         } else {
             checker.clearCache();
             result = checker.check(benchmarkItems, benchmarkAssignedSkillpoints);
